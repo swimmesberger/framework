@@ -5,9 +5,9 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.vaadin.testbench.elements.ButtonElement;
-import com.vaadin.tests.tb3.MultiBrowserTest;
+import com.vaadin.tests.tb3.SingleBrowserTest;
 
-public class UIAccessExceptionHandlingTest extends MultiBrowserTest {
+public class UIAccessExceptionHandlingTest extends SingleBrowserTest {
 
     @Test
     public void testExceptionHandlingOnUIAccess() throws Exception {
@@ -26,6 +26,10 @@ public class UIAccessExceptionHandlingTest extends MultiBrowserTest {
         assertLogTexts(
                 "1. Exception caught on get: java.util.concurrent.ExecutionException",
                 "0. Exception caught on execution with ConnectorErrorEvent : java.util.concurrent.ExecutionException");
+
+        $(ButtonElement.class).get(3).click();
+        assertLogText(0,
+                "0. Exception caught on execution with ConnectorErrorEvent : java.lang.NullPointerException");
     }
 
     private void assertLogTexts(String first, String second) {
