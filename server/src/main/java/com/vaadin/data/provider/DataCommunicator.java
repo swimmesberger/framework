@@ -142,7 +142,7 @@ public class DataCommunicator<T> extends AbstractExtension {
         /**
          * Marks all currently active data objects to be dropped.
          *
-         * @since
+         * @since 8.6.0
          */
         public void dropAllActiveData() {
             activeData.forEach(this::dropActiveData);
@@ -165,7 +165,7 @@ public class DataCommunicator<T> extends AbstractExtension {
          *
          * @return map of ids to dropped data objects
          *
-         * @since
+         * @since 8.6.0
          */
         protected Map<Object, T> getDroppedData() {
             Function<T, Object> getId = getDataProvider()::getId;
@@ -358,6 +358,15 @@ public class DataCommunicator<T> extends AbstractExtension {
             rpc.reset(getDataProviderSize());
         }
 
+        if (!updatedData.isEmpty()) {
+            JsonArray dataArray = Json.createArray();
+            int i = 0;
+            for (T data : updatedData) {
+                dataArray.set(i++, getDataObject(data));
+            }
+            rpc.updateData(dataArray);
+        }
+
         Range requestedRows = getPushRows();
         boolean triggerReset = false;
         if (!requestedRows.isEmpty()) {
@@ -371,15 +380,6 @@ public class DataCommunicator<T> extends AbstractExtension {
             }
 
             pushData(offset, rowsToPush);
-        }
-
-        if (!updatedData.isEmpty()) {
-            JsonArray dataArray = Json.createArray();
-            int i = 0;
-            for (T data : updatedData) {
-                dataArray.set(i++, getDataObject(data));
-            }
-            rpc.updateData(dataArray);
         }
 
         setPushRows(Range.withLength(0, 0));
